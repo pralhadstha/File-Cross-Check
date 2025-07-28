@@ -1,0 +1,200 @@
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f3f4f6;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+.container {
+  background-color: #ffffff;
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  max-width: 900px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.file-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.file-input-group label {
+  font-weight: 600;
+  color: #374151;
+}
+.file-input-group input[type="file"],
+.file-input-group input[type="text"] {
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: #f9fafb;
+  transition: border-color 0.2s ease-in-out;
+}
+.file-input-group input[type="file"]:hover,
+.file-input-group input[type="text"]:hover {
+  border-color: #9ca3af;
+}
+.file-input-group input[type="file"] {
+  cursor: pointer;
+}
+.btn-primary {
+  background-color: #4f46e5;
+  color: white;
+  width: 400px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-primary:hover {
+  background-color: #4338ca;
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+.btn-download {
+  background-color: #10b981;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.btn-download:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+}
+.btn-download:active {
+  transform: translateY(0);
+}
+.message-box {
+  background-color: #fef2f2;
+  border: 1px solid #ef4444;
+  color: #b91c1c;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  display: none;
+}
+.message-box.show {
+  display: block;
+}
+.loading-indicator {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4f46e5;
+  font-weight: 500;
+}
+.loading-indicator.show {
+  display: flex;
+}
+#loadingSpinner {
+  border: 4px solid #f3f4f6;
+  border-top: 4px solid #4f46e5;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.results-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+.results-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+.results-summary p {
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+.content-list-container {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.content-list-container pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: monospace;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+.content-list-container p {
+  color: #6b7280;
+  font-style: italic;
+}
+/* Display of missing content */
+.missing-item {
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.missing-item:last-child {
+  margin-bottom: 0;
+}
+.missing-item strong {
+  color: #1f2937;
+}
+.missing-item span {
+  color: #4b5563;
+}
+.missing-item-line {
+  font-family: monospace;
+  font-size: 0.875rem;
+  color: #4b5563;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+  .btn-primary {
+    width: 100%;
+  }
+}

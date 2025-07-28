@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Cross-Checker</title>
+    <link rel="stylesheet" href="./style.css" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style></style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-3xl font-extrabold text-center text-gray-900 mb-4">
+        File Cross-Checker
+      </h1>
+      <p class="text-center text-gray-600 mb-6">
+        Upload two files to compare their contents based on their first column.
+      </p>
+
+      <form
+        id="uploadForm"
+        enctype="multipart/form-data"
+        class="file-input-group"
+      >
+        <div>
+          <label for="file1Input">File A:</label>
+          <input
+            type="file"
+            id="file1Input"
+            name="fileA"
+            accept=".xlsx, .xls, .txt, .csv"
+            required
+          />
+        </div>
+        <div>
+          <label for="file2Input">File B:</label>
+          <input
+            type="file"
+            id="file2Input"
+            name="fileB"
+            accept=".xlsx, .xls, .txt, .csv"
+            required
+          />
+        </div>
+        <button type="submit" id="crossCheckBtn" class="btn-primary">
+          <span id="buttonText">Cross-Check Files</span>
+          <span
+            id="loadingSpinner"
+            class="hidden spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+        </button>
+      </form>
+
+      <div
+        id="messageBox"
+        class="message-box rounded-lg p-3 text-sm text-red-700 bg-red-50 border border-red-400"
+      >
+        <!-- Error messages will be displayed here -->
+      </div>
+
+      <div id="resultsSection" class="results-section hidden">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+          Comparison Results
+        </h2>
+        <div id="resultsSummary" class="results-summary mb-4">
+          <!-- Summary will be displayed here -->
+        </div>
+
+        <div id="downloadMatchedSection" class="hidden">
+          <h3 class="text-xl font-bold text-gray-700 mb-2">
+            Matched Contents:
+          </h3>
+          <a id="downloadMatchedBtn" class="btn-download" download href="#"
+            >Download Matched Data</a
+          >
+        </div>
+
+        <div id="downloadMissingSection" class="hidden">
+          <h3 class="text-xl font-bold text-gray-700 mb-2 mt-4">
+            Missing Contents:
+          </h3>
+          <a id="downloadMissingBtn" class="btn-download" download href="#"
+            >Download Missing Data</a
+          >
+        </div>
+
+        <h3 class="text-xl font-bold text-gray-700 mb-2 mt-4">
+          Contents from File A NOT found in File B (on-screen list):
+        </h3>
+        <div id="missingContentsDisplay" class="content-list-container">
+          <!-- Missing contents will be displayed here -->
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
