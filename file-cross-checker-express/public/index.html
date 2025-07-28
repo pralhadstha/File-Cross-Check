@@ -15,15 +15,11 @@
         File Cross-Checker
       </h1>
       <p class="text-center text-gray-600 mb-6">
-        Upload two files to compare their contents based on their first column.(Max: 10mb)
+        Upload two files to compare their contents.(Not more than 10MB each)
       </p>
 
-      <form
-        id="uploadForm"
-        enctype="multipart/form-data"
-        class="file-input-group"
-      >
-        <div>
+      <form id="uploadForm" enctype="multipart/form-data">
+        <div id="fileInputs" class="file-inputs mb-4">
           <label for="file1Input">File A:</label>
           <input
             type="file"
@@ -33,7 +29,7 @@
             required
           />
         </div>
-        <div>
+        <div id="fileInputs" class="file-inputs mb-4">
           <label for="file2Input">File B:</label>
           <input
             type="file"
@@ -43,14 +39,22 @@
             required
           />
         </div>
-        <button type="submit" id="crossCheckBtn" class="btn-primary">
+        <div class="file-input-group">
+          <label for="headerSelect">Select column for comparison:</label>
+          <select id="headerSelect" name="selectedColumn" disabled>
+            <option value="">Upload both files to load options...</option>
+          </select>
+          <p id="headerMessage" class="header-loading-message"></p>
+        </div>
+        <button type="submit" id="crossCheckBtn" class="btn-primary" disabled>
           <span id="buttonText">Cross-Check Files</span>
           <span
             id="loadingSpinner"
             class="hidden spinner-border spinner-border-sm"
             role="status"
             aria-hidden="true"
-          ></span>
+            ><p>Processing...</p></span
+          >
         </button>
       </form>
 
@@ -88,7 +92,7 @@
         </div>
 
         <h3 class="text-xl font-bold text-gray-700 mb-2 mt-4">
-          Contents from File A NOT found in File B (on-screen list):
+          Contents from File 1 NOT found in File 2 (on-screen list):
         </h3>
         <div id="missingContentsDisplay" class="content-list-container">
           <!-- Missing contents will be displayed here -->
