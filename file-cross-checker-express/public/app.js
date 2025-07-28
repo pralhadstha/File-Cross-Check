@@ -19,6 +19,8 @@ const missingContentsDisplay = document.getElementById(
 );
 const buttonText = document.getElementById("buttonText");
 const loadingSpinner = document.getElementById("loadingSpinner");
+const headerSelect = document.getElementById("headerSelect"); // Re-added
+const headerMessage = document.getElementById("headerMessage"); // New element for messages
 
 /**
  * Displays a message in the message box.
@@ -45,7 +47,7 @@ function showMessage(message, isError = true) {
       "border-green-400"
     );
   }
-  messageBox.classList.add("show");
+  messageBox.classList.add("show"); // Use 'show' class for display
 }
 
 /**
@@ -58,14 +60,16 @@ function hideMessage() {
 
 /**
  * Shows the loading indicator.
+ * @param {string} text The text to display next to the spinner.
  */
-function showLoading(text = "Processing...") {
+function showLoading(text = "Processing your files, please wait🙏...") {
   buttonText.textContent = text;
   loadingSpinner.classList.remove("hidden");
   loadingSpinner.classList.add("show");
   crossCheckBtn.disabled = true;
   file1Input.disabled = true;
   file2Input.disabled = true;
+  headerSelect.disabled = true; // Disable header select during loading
 }
 
 /**
@@ -78,7 +82,114 @@ function hideLoading() {
   crossCheckBtn.disabled = false;
   file1Input.disabled = false;
   file2Input.disabled = false;
+  // headerSelect.disabled = false; // Re-enable after cross-check, if applicable
 }
+
+/**
+ * Fetches headers from the server and populates the dropdown.
+ */
+async function fetchAndPopulateHeaders() {
+  const file1 = file1Input.files[0];
+  const file2 = file2Input.files[0];
+
+  if (!file1 || !file2) {
+    headerSelect.innerHTML =
+      '<option value="">Upload both files to load options...</option>';
+    headerSelect.disabled = true;
+    crossCheckBtn.disabled = true;
+    headerMessage.textContent = "";
+    return;
+  }
+
+  headerSelect.innerHTML =
+    '<option value="">Loading column headers...</option>';
+  headerSelect.disabled = true;
+  crossCheckBtn.disabled = true;
+  headerMessage.textContent = "Fetching column headers...";
+  hideMessage();
+
+  const formData = new FormData();
+  formData.append("fileA", file1);
+  formData.append("fileB", file2);
+
+  try {
+    const response = await fetch("/get-headers", {
+      method: "POST",
+      body: formData,
+    });
+    const result = await response.json();
+
+    if (result.success) {
+      headerSelect.innerHTML = ""; // Clear existing options
+      if (result.headers && result.headers.length > 0) {
+        if (result.fileAType === "structured") {
+          headerSelect.appendChild(new Option("Select a column...", "")); // Prompt for selection
+          result.headers.forEach((header) => {
+            headerSelect.appendChild(new Option(header, header));
+          });
+          headerSelect.disabled = false;
+          headerMessage.textContent = "";
+        } else {
+          // Plain text files
+          headerSelect.appendChild(new Option("Line Content", "Line Content"));
+          headerSelect.disabled = true; // Disable selection as it's line-by-line
+          headerMessage.textContent =
+            "Comparison will be line-by-line for text files.";
+          crossCheckBtn.disabled = false; // Enable cross-check button immediately
+        }
+        // If it's structured, crossCheckBtn remains disabled until a column is selected
+        if (result.fileAType === "structured" && headerSelect.value === "") {
+          crossCheckBtn.disabled = true;
+        } else if (
+          result.fileAType === "structured" &&
+          headerSelect.value !== ""
+        ) {
+          crossCheckBtn.disabled = false;
+        }
+      } else {
+        headerSelect.innerHTML =
+          '<option value="">No headers found or files are empty.</option>';
+        headerSelect.disabled = true;
+        crossCheckBtn.disabled = true;
+        headerMessage.textContent = "No suitable headers found for comparison.";
+      }
+    } else {
+      showMessage(result.message, true);
+      headerSelect.innerHTML =
+        '<option value="">Error loading headers.</option>';
+      headerSelect.disabled = true;
+      crossCheckBtn.disabled = true;
+      headerMessage.textContent = "Error: " + result.message;
+    }
+  } catch (error) {
+    console.error("Error fetching headers:", error);
+    showMessage(`An error occurred fetching headers: ${error.message}`, true);
+    headerSelect.innerHTML =
+      '<option value="">Network error loading headers.</option>';
+    headerSelect.disabled = true;
+    crossCheckBtn.disabled = true;
+    headerMessage.textContent = "Network error loading headers.";
+  }
+}
+
+// Event listeners for file input changes to trigger header loading
+file1Input.addEventListener("change", fetchAndPopulateHeaders);
+file2Input.addEventListener("change", fetchAndPopulateHeaders);
+
+// Event listener for header selection change to enable/disable button
+headerSelect.addEventListener("change", () => {
+  // Enable cross-check button only if a header is selected (and it's not the placeholder)
+  if (
+    headerSelect.value !== "" &&
+    headerSelect.value !== "Loading headers..." &&
+    headerSelect.value !== "No headers found or files are empty." &&
+    headerSelect.value !== "Error loading headers."
+  ) {
+    crossCheckBtn.disabled = false;
+  } else {
+    crossCheckBtn.disabled = true;
+  }
+});
 
 // Event listener for the form submission
 uploadForm.addEventListener("submit", async (event) => {
@@ -92,17 +203,25 @@ uploadForm.addEventListener("submit", async (event) => {
 
   const file1 = file1Input.files[0];
   const file2 = file2Input.files[0];
+  const selectedColumn = headerSelect.value; // Get the selected column value
 
   if (!file1 || !file2) {
     showMessage("Please select both File A and File B.");
     return;
   }
 
-  showLoading("Cross-Checking, PLEASE WAIT🙏...");
+  // Validate selected column if it's not a plain text scenario
+  if (headerSelect.disabled === false && selectedColumn === "") {
+    showMessage("Please select a column header for comparison.");
+    return;
+  }
+
+  showLoading("Cross-Checking, please wait🙏...");
 
   const formData = new FormData();
   formData.append("fileA", file1);
   formData.append("fileB", file2);
+  formData.append("selectedColumn", selectedColumn); // Append the selected column
 
   try {
     const response = await fetch("/cross-check", {
@@ -175,7 +294,10 @@ uploadForm.addEventListener("submit", async (event) => {
               `;
       }
       resultsSection.classList.remove("hidden");
-      showMessage("Cross-check completed successfully!", false);
+      showMessage(
+        "Cross-check completed successfully! Download your file.",
+        false
+      );
     } else {
       showMessage(result.message);
     }
